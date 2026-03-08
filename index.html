@@ -4,525 +4,139 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lemon 🍋 Tools</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg:        #0d1117;
-      --bg2:       #161b22;
-      --border:    #21262d;
-      --purple:    #bd93f9;
-      --pink:      #ff79c6;
-      --cyan:      #8be9fd;
-      --green:     #50fa7b;
-      --yellow:    #f1fa8c;
-      --orange:    #ffb86c;
-      --red:       #ff5555;
-      --fg:        #f8f8f2;
-      --comment:   #6272a4;
+      --bg:      #0d1117;
+      --bg2:     #161b22;
+      --border:  #21262d;
+      --purple:  #bd93f9;
+      --pink:    #ff79c6;
+      --cyan:    #8be9fd;
+      --green:   #50fa7b;
+      --yellow:  #f1fa8c;
+      --orange:  #ffb86c;
+      --red:     #ff5555;
+      --fg:      #f8f8f2;
+      --comment: #6272a4;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
+    body { background:var(--bg);color:var(--fg);font-family:'JetBrains Mono',monospace;overflow-x:hidden;cursor:none; }
 
-    body {
-      background: var(--bg);
-      color: var(--fg);
-      font-family: 'JetBrains Mono', monospace;
-      overflow-x: hidden;
-      cursor: none;
+    .cursor { width:12px;height:12px;background:var(--purple);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transition:transform .1s,background .2s;mix-blend-mode:screen; }
+    .cursor-ring { width:36px;height:36px;border:1px solid var(--purple);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transition:all .15s ease;mix-blend-mode:screen; }
+    body::before { content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px);pointer-events:none;z-index:100; }
+    .grid-bg { position:fixed;inset:0;background-image:linear-gradient(rgba(189,147,249,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(189,147,249,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0; }
+
+    nav { position:fixed;top:0;left:0;right:0;z-index:50;padding:1.2rem 2rem;display:flex;align-items:center;justify-content:space-between;background:rgba(13,17,23,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border); }
+    .nav-logo { font-size:1rem;font-weight:800;color:var(--purple);letter-spacing:.08em; }
+    .nav-logo span { color:var(--pink); }
+    .nav-links { display:flex;gap:2rem;list-style:none; }
+    .nav-links a { color:var(--comment);text-decoration:none;font-size:.75rem;letter-spacing:.1em;transition:color .2s; }
+    .nav-links a:hover { color:var(--cyan); }
+    .nav-burger { display:none;flex-direction:column;gap:5px;cursor:none;background:none;border:none;padding:4px; }
+    .nav-burger span { width:24px;height:1px;background:var(--fg);display:block; }
+
+    .hero { position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:6rem 2rem 4rem;z-index:1;overflow:hidden; }
+    .hero-glow { position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(189,147,249,.12) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;animation:pulse 4s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.8}50%{transform:translate(-50%,-50%) scale(1.1);opacity:1} }
+    .hero-content { text-align:center;max-width:800px;position:relative; }
+    .hero-tag { display:inline-block;font-size:.7rem;letter-spacing:.2em;color:var(--green);border:1px solid rgba(80,250,123,.3);padding:.3rem 1rem;margin-bottom:2rem;animation:fadeDown .6s ease both; }
+    .hero-tag::before { content:'> ';color:var(--comment); }
+    .hero-title { font-size:clamp(3rem,8vw,6rem);font-weight:800;line-height:1.05;margin-bottom:1.5rem;animation:fadeDown .6s ease .1s both; }
+    .hero-title .line1 { color:var(--fg);display:block; }
+    .hero-title .line2 { color:transparent;-webkit-text-stroke:1px var(--purple);display:block; }
+    .hero-desc { font-size:.9rem;color:var(--comment);line-height:1.8;max-width:500px;margin:0 auto 3rem;animation:fadeDown .6s ease .2s both; }
+    .hero-cta { display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeDown .6s ease .3s both; }
+
+    .btn { font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.1em;padding:.8rem 2rem;border:none;cursor:none;text-decoration:none;transition:all .2s; }
+    .btn-primary { background:var(--purple);color:var(--bg);font-weight:700; }
+    .btn-primary:hover { background:var(--pink);transform:translateY(-2px);box-shadow:0 8px 30px rgba(189,147,249,.4); }
+    .btn-outline { background:transparent;color:var(--fg);border:1px solid var(--border); }
+    .btn-outline:hover { border-color:var(--purple);color:var(--purple);transform:translateY(-2px); }
+
+    .terminal-wrap { position:relative;max-width:700px;margin:5rem auto 0;animation:fadeUp .8s ease .4s both; }
+    .terminal { background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.6),0 0 0 1px rgba(189,147,249,.1); }
+    .terminal-bar { background:#1c2128;padding:.8rem 1rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid var(--border); }
+    .dot { width:12px;height:12px;border-radius:50%; }
+    .dot-red{background:var(--red)} .dot-yellow{background:var(--yellow)} .dot-green{background:var(--green)}
+    .terminal-title { flex:1;text-align:center;font-size:.7rem;color:var(--comment);letter-spacing:.1em; }
+    .terminal-body { padding:1.5rem;font-size:.8rem;line-height:1.8;min-height:300px; }
+    .blink { animation:blink 1s step-end infinite;color:var(--purple); }
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+    .section { position:relative;z-index:1;padding:6rem 2rem;max-width:1100px;margin:0 auto; }
+    .section-label { font-size:.65rem;letter-spacing:.3em;color:var(--purple);margin-bottom:.8rem; }
+    .section-title { font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:1rem;color:var(--fg); }
+    .section-title span { color:var(--purple); }
+    .section-desc { color:var(--comment);font-size:.85rem;line-height:1.8;max-width:500px;margin-bottom:3rem; }
+
+    .stats { display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin:4rem 0; }
+    .stat { background:var(--bg2);padding:2rem;text-align:center; }
+    .stat-number { font-size:2.5rem;font-weight:800;color:var(--purple);display:block;line-height:1;margin-bottom:.5rem; }
+    .stat-label { font-size:.7rem;color:var(--comment);letter-spacing:.1em; }
+
+    .tools-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:var(--border);border:1px solid var(--border); }
+    .tool-card { background:var(--bg2);padding:2rem;transition:background .2s;position:relative;overflow:hidden; }
+    .tool-card::before { content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent,var(--purple)),transparent);transform:scaleX(0);transition:transform .3s; }
+    .tool-card:hover { background:#1a2030; }
+    .tool-card:hover::before { transform:scaleX(1); }
+    .tool-icon { font-size:1.8rem;margin-bottom:1rem; }
+    .tool-name { font-size:.9rem;font-weight:700;color:var(--fg);margin-bottom:.5rem; }
+    .tool-desc { font-size:.75rem;color:var(--comment);line-height:1.6;margin-bottom:1rem; }
+    .tool-tag { display:inline-block;font-size:.65rem;letter-spacing:.1em;padding:.2rem .6rem;border:1px solid;color:var(--accent,var(--purple));border-color:var(--accent,var(--purple));opacity:.7; }
+
+    .about-grid { display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center; }
+    .about-text p { color:var(--comment);font-size:.85rem;line-height:2;margin-bottom:1rem; }
+    .about-text p span { color:var(--fg); }
+    .about-tags { display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.5rem; }
+    .about-tag { font-size:.65rem;letter-spacing:.1em;padding:.3rem .8rem;border:1px solid var(--border);color:var(--comment);transition:all .2s; }
+    .about-tag:hover { border-color:var(--purple);color:var(--purple); }
+    .about-card { background:var(--bg2);border:1px solid var(--border);padding:2rem; }
+    .about-card-title { font-size:.7rem;color:var(--comment);letter-spacing:.2em;margin-bottom:1.5rem; }
+    .about-stat { display:flex;justify-content:space-between;padding:.8rem 0;border-bottom:1px solid var(--border);font-size:.8rem; }
+    .about-stat:last-child { border-bottom:none; }
+    .about-stat-label { color:var(--comment); }
+    .about-stat-value { color:var(--purple);font-weight:700; }
+
+    .setup-grid { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+    .setup-item { display:flex;gap:1rem;align-items:flex-start;padding:1.5rem;border:1px solid var(--border);transition:border-color .2s; }
+    .setup-item:hover { border-color:var(--purple); }
+    .setup-num { font-size:2rem;font-weight:800;color:var(--border);line-height:1;flex-shrink:0; }
+    .setup-content h3 { font-size:.85rem;color:var(--fg);margin-bottom:.4rem; }
+    .setup-content p { font-size:.75rem;color:var(--comment);line-height:1.6; }
+
+    .contact-grid { display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border); }
+    .contact-card { background:var(--bg2);padding:2.5rem;transition:background .2s;text-decoration:none;display:block; }
+    .contact-card:hover { background:#1a2030; }
+    .contact-icon { font-size:2rem;margin-bottom:1rem; }
+    .contact-title { font-size:.9rem;font-weight:700;color:var(--fg);margin-bottom:.5rem; }
+    .contact-value { font-size:.75rem;color:var(--comment); }
+    .contact-arrow { color:var(--purple);font-size:.8rem;margin-top:1rem;display:block;transition:transform .2s; }
+    .contact-card:hover .contact-arrow { transform:translateX(6px); }
+
+    footer { position:relative;z-index:1;border-top:1px solid var(--border);padding:2rem;text-align:center; }
+    .footer-logo { font-size:1.2rem;font-weight:800;color:var(--purple);margin-bottom:.5rem; }
+    .footer-sub { font-size:.7rem;color:var(--comment);letter-spacing:.1em; }
+    .footer-sub a { color:var(--cyan);text-decoration:none; }
+
+    @keyframes fadeDown { from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)} }
+    .reveal { opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease; }
+    .reveal.visible { opacity:1;transform:translateY(0); }
+
+    @media (max-width:768px) {
+      .nav-links { display:none; }
+      .nav-links.open { display:flex;flex-direction:column;position:fixed;top:60px;left:0;right:0;background:rgba(13,17,23,.98);padding:2rem;border-bottom:1px solid var(--border);gap:1.5rem; }
+      .nav-burger { display:flex; }
+      .about-grid,.setup-grid,.contact-grid { grid-template-columns:1fr; }
+      .hero-title { font-size:clamp(2.5rem,10vw,4rem); }
+      .section { padding:4rem 1.5rem; }
     }
-
-    /* Custom cursor */
-    .cursor {
-      width: 12px; height: 12px;
-      background: var(--purple);
-      border-radius: 50%;
-      position: fixed;
-      pointer-events: none;
-      z-index: 9999;
-      transition: transform 0.1s, background 0.2s;
-      mix-blend-mode: screen;
-    }
-    .cursor-ring {
-      width: 36px; height: 36px;
-      border: 1px solid var(--purple);
-      border-radius: 50%;
-      position: fixed;
-      pointer-events: none;
-      z-index: 9998;
-      transition: all 0.15s ease;
-      mix-blend-mode: screen;
-    }
-
-    /* Scanlines overlay */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,0,0,0.03) 2px,
-        rgba(0,0,0,0.03) 4px
-      );
-      pointer-events: none;
-      z-index: 100;
-    }
-
-    /* Noise texture */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 99;
-      opacity: 0.4;
-    }
-
-    /* Grid background */
-    .grid-bg {
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(189,147,249,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(189,147,249,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* NAV */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 50;
-      padding: 1.2rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(13,17,23,0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav-logo {
-      font-size: 1rem;
-      font-weight: 800;
-      color: var(--purple);
-      letter-spacing: 0.08em;
-    }
-
-    .nav-logo span { color: var(--pink); }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--comment);
-      text-decoration: none;
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover { color: var(--cyan); }
-
-    /* HERO */
-    .hero {
-      position: relative;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 6rem 2rem 4rem;
-      z-index: 1;
-      overflow: hidden;
-    }
-
-    .hero-glow {
-      position: absolute;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(189,147,249,0.12) 0%, transparent 70%);
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      animation: pulse 4s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-    }
-
-    .hero-content {
-      text-align: center;
-      max-width: 800px;
-      position: relative;
-    }
-
-    .hero-tag {
-      display: inline-block;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      color: var(--green);
-      border: 1px solid rgba(80,250,123,0.3);
-      padding: 0.3rem 1rem;
-      margin-bottom: 2rem;
-      animation: fadeDown 0.6s ease both;
-    }
-
-    .hero-tag::before { content: '> '; color: var(--comment); }
-
-    .hero-title {
-      font-size: clamp(3rem, 8vw, 6rem);
-      font-weight: 800;
-      line-height: 1.05;
-      margin-bottom: 1.5rem;
-      animation: fadeDown 0.6s ease 0.1s both;
-    }
-
-    .hero-title .line1 { color: var(--fg); display: block; }
-    .hero-title .line2 {
-      color: transparent;
-      -webkit-text-stroke: 1px var(--purple);
-      display: block;
-    }
-
-    .hero-desc {
-      font-size: 0.9rem;
-      color: var(--comment);
-      line-height: 1.8;
-      max-width: 500px;
-      margin: 0 auto 3rem;
-      animation: fadeDown 0.6s ease 0.2s both;
-    }
-
-    .hero-cta {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      animation: fadeDown 0.6s ease 0.3s both;
-    }
-
-    .btn {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      padding: 0.8rem 2rem;
-      border: none;
-      cursor: none;
-      text-decoration: none;
-      transition: all 0.2s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn-primary {
-      background: var(--purple);
-      color: var(--bg);
-      font-weight: 700;
-    }
-
-    .btn-primary:hover {
-      background: var(--pink);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(189,147,249,0.4);
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--fg);
-      border: 1px solid var(--border);
-    }
-
-    .btn-outline:hover {
-      border-color: var(--purple);
-      color: var(--purple);
-      transform: translateY(-2px);
-    }
-
-    /* TERMINAL PREVIEW */
-    .terminal-wrap {
-      position: relative;
-      max-width: 700px;
-      margin: 5rem auto 0;
-      animation: fadeUp 0.8s ease 0.4s both;
-    }
-
-    .terminal {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(189,147,249,0.1);
-    }
-
-    .terminal-bar {
-      background: #1c2128;
-      padding: 0.8rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .dot {
-      width: 12px; height: 12px;
-      border-radius: 50%;
-    }
-    .dot-red   { background: var(--red); }
-    .dot-yellow{ background: var(--yellow); }
-    .dot-green { background: var(--green); }
-
-    .terminal-title {
-      flex: 1;
-      text-align: center;
-      font-size: 0.7rem;
-      color: var(--comment);
-      letter-spacing: 0.1em;
-    }
-
-    .terminal-body {
-      padding: 1.5rem;
-      font-size: 0.8rem;
-      line-height: 1.8;
-    }
-
-    .t-comment { color: var(--comment); }
-    .t-purple  { color: var(--purple); }
-    .t-pink    { color: var(--pink); }
-    .t-cyan    { color: var(--cyan); }
-    .t-green   { color: var(--green); }
-    .t-yellow  { color: var(--yellow); }
-    .t-orange  { color: var(--orange); }
-    .t-red     { color: var(--red); }
-
-    .blink {
-      animation: blink 1s step-end infinite;
-      color: var(--purple);
-    }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-    /* TOOLS SECTION */
-    .section {
-      position: relative;
-      z-index: 1;
-      padding: 6rem 2rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .section-label {
-      font-size: 0.65rem;
-      letter-spacing: 0.3em;
-      color: var(--purple);
-      margin-bottom: 0.8rem;
-    }
-
-    .section-title {
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      font-weight: 800;
-      margin-bottom: 1rem;
-      color: var(--fg);
-    }
-
-    .section-title span { color: var(--purple); }
-
-    .section-desc {
-      color: var(--comment);
-      font-size: 0.85rem;
-      line-height: 1.8;
-      max-width: 500px;
-      margin-bottom: 3rem;
-    }
-
-    .tools-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-    }
-
-    .tool-card {
-      background: var(--bg2);
-      padding: 2rem;
-      transition: background 0.2s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .tool-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent, var(--purple)), transparent);
-      transform: scaleX(0);
-      transition: transform 0.3s;
-    }
-
-    .tool-card:hover { background: #1a2030; }
-    .tool-card:hover::before { transform: scaleX(1); }
-
-    .tool-icon {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-    }
-
-    .tool-name {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--fg);
-      margin-bottom: 0.5rem;
-    }
-
-    .tool-desc {
-      font-size: 0.75rem;
-      color: var(--comment);
-      line-height: 1.6;
-      margin-bottom: 1rem;
-    }
-
-    .tool-tag {
-      display: inline-block;
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      padding: 0.2rem 0.6rem;
-      border: 1px solid;
-      color: var(--accent, var(--purple));
-      border-color: var(--accent, var(--purple));
-      opacity: 0.7;
-    }
-
-    /* STATS */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      margin: 4rem 0;
-    }
-
-    .stat {
-      background: var(--bg2);
-      padding: 2rem;
-      text-align: center;
-    }
-
-    .stat-number {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: var(--purple);
-      display: block;
-      line-height: 1;
-      margin-bottom: 0.5rem;
-    }
-
-    .stat-label {
-      font-size: 0.7rem;
-      color: var(--comment);
-      letter-spacing: 0.1em;
-    }
-
-    /* SETUP SECTION */
-    .setup-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-    }
-
-    @media (max-width: 700px) {
-      .setup-grid { grid-template-columns: 1fr; }
-      nav .nav-links { display: none; }
-    }
-
-    .setup-item {
-      display: flex;
-      gap: 1rem;
-      align-items: flex-start;
-      padding: 1.5rem;
-      border: 1px solid var(--border);
-      transition: border-color 0.2s;
-    }
-
-    .setup-item:hover { border-color: var(--purple); }
-
-    .setup-num {
-      font-size: 2rem;
-      font-weight: 800;
-      color: var(--border);
-      line-height: 1;
-      flex-shrink: 0;
-    }
-
-    .setup-content h3 {
-      font-size: 0.85rem;
-      color: var(--fg);
-      margin-bottom: 0.4rem;
-    }
-
-    .setup-content p {
-      font-size: 0.75rem;
-      color: var(--comment);
-      line-height: 1.6;
-    }
-
-    /* FOOTER */
-    footer {
-      position: relative;
-      z-index: 1;
-      border-top: 1px solid var(--border);
-      padding: 2rem;
-      text-align: center;
-    }
-
-    .footer-logo {
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: var(--purple);
-      margin-bottom: 0.5rem;
-    }
-
-    .footer-sub {
-      font-size: 0.7rem;
-      color: var(--comment);
-      letter-spacing: 0.1em;
-    }
-
-    .footer-sub a {
-      color: var(--cyan);
-      text-decoration: none;
-    }
-
-    /* ANIMATIONS */
-    @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
+    @media (max-width:480px) {
+      .tools-grid { grid-template-columns:1fr; }
+      .stats { grid-template-columns:1fr 1fr; }
     }
   </style>
 </head>
@@ -532,17 +146,20 @@
 <div class="cursor-ring" id="cursorRing"></div>
 <div class="grid-bg"></div>
 
-<!-- NAV -->
 <nav>
   <div class="nav-logo">🍋 Lemon<span> Tools</span></div>
-  <ul class="nav-links">
+  <ul class="nav-links" id="navLinks">
     <li><a href="#outils">OUTILS</a></li>
+    <li><a href="#about">ABOUT</a></li>
     <li><a href="#setup">SETUP</a></li>
+    <li><a href="#contact">CONTACT</a></li>
     <li><a href="https://github.com/matheymalone-pixel" target="_blank">GITHUB</a></li>
   </ul>
+  <button class="nav-burger" id="burger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-glow"></div>
   <div class="hero-content">
@@ -551,15 +168,11 @@
       <span class="line1">Lemon 🍋</span>
       <span class="line2">Tools</span>
     </h1>
-    <p class="hero-desc">
-      Un environnement de scripts Mac fait maison — audit sécurité, analyse réseau, assistant IA local, organisateur de fichiers. Tout depuis le terminal.
-    </p>
+    <p class="hero-desc">Un environnement de scripts Mac fait maison — audit sécurité, analyse réseau, assistant IA local, organisateur de fichiers. Tout depuis le terminal.</p>
     <div class="hero-cta">
       <a href="https://github.com/matheymalone-pixel" class="btn btn-primary" target="_blank">→ Voir sur GitHub</a>
       <a href="#outils" class="btn btn-outline">Explorer les outils</a>
     </div>
-
-    <!-- Terminal preview -->
     <div class="terminal-wrap">
       <div class="terminal">
         <div class="terminal-bar">
@@ -568,208 +181,186 @@
           <div class="dot dot-green"></div>
           <div class="terminal-title">iTerm2 — ~/scripts</div>
         </div>
-        <div class="terminal-body">
-          <div><span class="t-comment">╔══════════════════════════════════════╗</span></div>
-          <div><span class="t-comment">║  </span><span class="t-purple">🛠️  Lemon 🍋 Tools v1.0</span><span class="t-comment">               ║</span></div>
-          <div><span class="t-comment">╚══════════════════════════════════════╝</span></div>
-          <br>
-          <div><span class="t-cyan">  🤖 Intelligence Artificielle</span></div>
-          <div><span class="t-comment">  [1] </span><span class="t-fg">Assistant IA</span><span class="t-comment"> ............... </span><span class="t-pink">ai</span></div>
-          <br>
-          <div><span class="t-red">  🔐 Sécurité</span></div>
-          <div><span class="t-comment">  [2] </span><span class="t-fg">Audit de sécurité Mac</span><span class="t-comment"> ...... </span><span class="t-pink">audit</span></div>
-          <div><span class="t-comment">  [3] </span><span class="t-fg">Analyseur réseau</span><span class="t-comment"> .......... </span><span class="t-pink">netaudit</span></div>
-          <br>
-          <div><span class="t-green">  📁 Fichiers</span></div>
-          <div><span class="t-comment">  [4] </span><span class="t-fg">Organisateur</span><span class="t-comment"> .............. </span><span class="t-pink">trier</span></div>
-          <br>
-          <div><span class="t-comment">  ──────────────────────────────────</span></div>
-          <div><span class="t-comment">  👉 Votre choix : </span><span class="blink">█</span></div>
+        <div class="terminal-body" id="terminalBody">
+          <span class="blink" id="termCursor">█</span>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- STATS -->
 <div class="section">
   <div class="stats reveal">
-    <div class="stat">
-      <span class="stat-number">5</span>
-      <span class="stat-label">SCRIPTS</span>
-    </div>
-    <div class="stat">
-      <span class="stat-number">3</span>
-      <span class="stat-label">SERVICES LAUNCHD</span>
-    </div>
-    <div class="stat">
-      <span class="stat-number">100%</span>
-      <span class="stat-label">HORS LIGNE</span>
-    </div>
-    <div class="stat">
-      <span class="stat-number">0€</span>
-      <span class="stat-label">COÛT / MOIS</span>
-    </div>
+    <div class="stat"><span class="stat-number">5</span><span class="stat-label">SCRIPTS</span></div>
+    <div class="stat"><span class="stat-number">3</span><span class="stat-label">SERVICES LAUNCHD</span></div>
+    <div class="stat"><span class="stat-number">100%</span><span class="stat-label">HORS LIGNE</span></div>
+    <div class="stat"><span class="stat-number">0€</span><span class="stat-label">COÛT / MOIS</span></div>
   </div>
 </div>
 
-<!-- OUTILS -->
 <section class="section" id="outils">
   <div class="section-label reveal">// LES OUTILS</div>
   <h2 class="section-title reveal">Tout ce dont tu as <span>besoin</span></h2>
   <p class="section-desc reveal">Chaque script est conçu pour un usage précis, intégré dans un menu central et accessible depuis la barre de menus.</p>
-
   <div class="tools-grid reveal">
-    <div class="tool-card" style="--accent: var(--pink)">
+    <div class="tool-card" style="--accent:var(--pink)">
       <div class="tool-icon">🤖</div>
       <div class="tool-name">Assistant IA</div>
       <div class="tool-desc">Mistral tourne en local sur ton Mac. Zéro internet, zéro abonnement, zéro limite.</div>
       <span class="tool-tag">alias: ai</span>
     </div>
-    <div class="tool-card" style="--accent: var(--red)">
+    <div class="tool-card" style="--accent:var(--red)">
       <div class="tool-icon">🔐</div>
       <div class="tool-name">Audit de sécurité</div>
       <div class="tool-desc">Scan des fichiers suspects, processus en arrière-plan, LaunchAgents et ports ouverts.</div>
       <span class="tool-tag">alias: audit</span>
     </div>
-    <div class="tool-card" style="--accent: var(--cyan)">
+    <div class="tool-card" style="--accent:var(--cyan)">
       <div class="tool-icon">🌐</div>
       <div class="tool-name">Analyseur réseau</div>
-      <div class="tool-desc">Détecte les appareils connectés, scanne les ports, analyse les connexions actives. Alertes Gmail automatiques.</div>
+      <div class="tool-desc">Détecte les appareils connectés, scanne les ports, alertes Gmail automatiques.</div>
       <span class="tool-tag">alias: netaudit</span>
     </div>
-    <div class="tool-card" style="--accent: var(--yellow)">
+    <div class="tool-card" style="--accent:var(--yellow)">
       <div class="tool-icon">📁</div>
       <div class="tool-name">Organisateur</div>
       <div class="tool-desc">Trie automatiquement tes téléchargements par catégorie. Images, vidéos, docs, code.</div>
       <span class="tool-tag">alias: trier</span>
     </div>
-    <div class="tool-card" style="--accent: var(--orange)">
+    <div class="tool-card" style="--accent:var(--orange)">
       <div class="tool-icon">🏗️</div>
       <div class="tool-name">Générateur de projet</div>
       <div class="tool-desc">Crée une structure de projet Python complète en quelques secondes.</div>
       <span class="tool-tag">alias: newproject</span>
     </div>
-    <div class="tool-card" style="--accent: var(--green)">
-      <div class="tool-icon">🎮</div>
-      <div class="tool-name">Re-Nature</div>
-      <div class="tool-desc">Jeu pygame fait maison. Lance-le directement depuis le menu.</div>
-      <span class="tool-tag">alias: renature</span>
+    <div class="tool-card" style="--accent:var(--purple)">
+      <div class="tool-icon">🛠️</div>
+      <div class="tool-name">Menu Central</div>
+      <div class="tool-desc">Lance tous tes outils depuis un seul endroit avec barre de progression et icône Mac.</div>
+      <span class="tool-tag">alias: tools</span>
     </div>
   </div>
 </section>
 
-<!-- SETUP -->
+<section class="section" id="about">
+  <div class="section-label reveal">// ABOUT ME</div>
+  <h2 class="section-title reveal">Qui est <span>Lemon</span> ?</h2>
+  <div class="about-grid reveal">
+    <div class="about-text">
+      <p>Je suis <span>développeur autodidacte</span> passionné par l'automatisation et la sécurité informatique sur Mac.</p>
+      <p>Ce qui me motive : <span>construire mes propres outils</span> plutôt que d'utiliser ce qui existe déjà. Chaque script résout un problème concret du quotidien.</p>
+      <p>Je m'intéresse à la <span>sécurité réseau</span>, à l'<span>intelligence artificielle locale</span> et à l'<span>automatisation macOS</span>.</p>
+      <p>Lemon Tools c'est mon laboratoire — construit outil par outil, appris ligne par ligne.</p>
+      <div class="about-tags">
+        <span class="about-tag">Python</span>
+        <span class="about-tag">macOS</span>
+        <span class="about-tag">Sécurité</span>
+        <span class="about-tag">Automatisation</span>
+        <span class="about-tag">IA locale</span>
+        <span class="about-tag">Terminal</span>
+        <span class="about-tag">Shell</span>
+        <span class="about-tag">Réseau</span>
+      </div>
+    </div>
+    <div class="about-card">
+      <div class="about-card-title">// STACK</div>
+      <div class="about-stat"><span class="about-stat-label">Langage principal</span><span class="about-stat-value">Python 3.9</span></div>
+      <div class="about-stat"><span class="about-stat-label">Terminal</span><span class="about-stat-value">iTerm2 + Zsh</span></div>
+      <div class="about-stat"><span class="about-stat-label">Éditeur</span><span class="about-stat-value">VS Code</span></div>
+      <div class="about-stat"><span class="about-stat-label">Thème</span><span class="about-stat-value">Dracula</span></div>
+      <div class="about-stat"><span class="about-stat-label">IA locale</span><span class="about-stat-value">Mistral 7B</span></div>
+      <div class="about-stat"><span class="about-stat-label">OS</span><span class="about-stat-value">macOS</span></div>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="setup">
   <div class="section-label reveal">// LE SETUP</div>
   <h2 class="section-title reveal">Un environnement <span>complet</span></h2>
   <p class="section-desc reveal">Chaque élément a été choisi et configuré pour s'intégrer parfaitement.</p>
-
   <div class="setup-grid reveal">
-    <div class="setup-item">
-      <div class="setup-num">01</div>
-      <div class="setup-content">
-        <h3>iTerm2 + Dracula</h3>
-        <p>Terminal remplacé par iTerm2 avec thème Dracula, transparence et Nerd Fonts.</p>
-      </div>
-    </div>
-    <div class="setup-item">
-      <div class="setup-num">02</div>
-      <div class="setup-content">
-        <h3>Oh My Zsh + Powerlevel10k</h3>
-        <p>Prompt pro avec git, heure, statut des commandes et autosuggestions.</p>
-      </div>
-    </div>
-    <div class="setup-item">
-      <div class="setup-num">03</div>
-      <div class="setup-content">
-        <h3>Outils modernes</h3>
-        <p>eza, bat, fzf, zoxide — les commandes Unix remplacées par des versions 2024.</p>
-      </div>
-    </div>
-    <div class="setup-item">
-      <div class="setup-num">04</div>
-      <div class="setup-content">
-        <h3>VS Code + Dracula</h3>
-        <p>GitLens, Error Lens, Pylance, Live Server — stack Python + Web complète.</p>
-      </div>
-    </div>
-    <div class="setup-item">
-      <div class="setup-num">05</div>
-      <div class="setup-content">
-        <h3>Launchd automation</h3>
-        <p>3 services au démarrage — menubar, Ollama, network analyzer. Tout automatique.</p>
-      </div>
-    </div>
-    <div class="setup-item">
-      <div class="setup-num">06</div>
-      <div class="setup-content">
-        <h3>Ollama + Mistral</h3>
-        <p>LLM local, hors ligne, sans abonnement. Intégré dans le menu tools.</p>
-      </div>
-    </div>
+    <div class="setup-item"><div class="setup-num">01</div><div class="setup-content"><h3>iTerm2 + Dracula</h3><p>Terminal remplacé par iTerm2 avec thème Dracula, transparence et Nerd Fonts.</p></div></div>
+    <div class="setup-item"><div class="setup-num">02</div><div class="setup-content"><h3>Oh My Zsh + Powerlevel10k</h3><p>Prompt pro avec git, heure, statut des commandes et autosuggestions.</p></div></div>
+    <div class="setup-item"><div class="setup-num">03</div><div class="setup-content"><h3>Outils modernes</h3><p>eza, bat, fzf, zoxide — les commandes Unix remplacées par des versions 2024.</p></div></div>
+    <div class="setup-item"><div class="setup-num">04</div><div class="setup-content"><h3>VS Code + Dracula</h3><p>GitLens, Error Lens, Pylance, Live Server — stack Python + Web complète.</p></div></div>
+    <div class="setup-item"><div class="setup-num">05</div><div class="setup-content"><h3>Launchd automation</h3><p>3 services au démarrage — menubar, Ollama, network analyzer. Tout automatique.</p></div></div>
+    <div class="setup-item"><div class="setup-num">06</div><div class="setup-content"><h3>Ollama + Mistral</h3><p>LLM local, hors ligne, sans abonnement. Intégré dans le menu tools.</p></div></div>
   </div>
 </section>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-logo">🛠️ Lemon 🍋 Tools</div>
-  <div class="footer-sub">
-    Fait par <a href="https://github.com/matheymalone-pixel">Lemon</a> · macOS · Python · 2026
+<section class="section" id="contact">
+  <div class="section-label reveal">// CONTACT</div>
+  <h2 class="section-title reveal">Me <span>contacter</span></h2>
+  <p class="section-desc reveal">Une question, une collaboration, un projet ? Je suis disponible.</p>
+  <div class="contact-grid reveal">
+    <a href="mailto:matheymalone@gmail.com" class="contact-card">
+      <div class="contact-icon">📧</div>
+      <div class="contact-title">Email</div>
+      <div class="contact-value">matheymalone@gmail.com</div>
+      <span class="contact-arrow">→ Envoyer un email</span>
+    </a>
+    <a href="https://github.com/matheymalone-pixel" target="_blank" class="contact-card">
+      <div class="contact-icon">🐙</div>
+      <div class="contact-title">GitHub</div>
+      <div class="contact-value">Voir mes projets et contributions</div>
+      <span class="contact-arrow">→ Ouvrir GitHub</span>
+    </a>
   </div>
+</section>
+
+<footer>
+  <div class="footer-logo">🍋 Lemon Tools</div>
+  <div class="footer-sub">Fait par <a href="https://github.com/matheymalone-pixel">Lemon</a> · macOS · Python · 2026</div>
 </footer>
 
 <script>
-  // Custom cursor
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.left = mx - 6 + 'px';
-    cursor.style.top  = my - 6 + 'px';
+  const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx-6+'px';cursor.style.top=my-6+'px';});
+  (function a(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx-18+'px';ring.style.top=ry-18+'px';requestAnimationFrame(a);})();
+  document.querySelectorAll('a,button').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{cursor.style.transform='scale(2)';cursor.style.background='var(--pink)';ring.style.borderColor='var(--pink)';});
+    el.addEventListener('mouseleave',()=>{cursor.style.transform='scale(1)';cursor.style.background='var(--purple)';ring.style.borderColor='var(--purple)';});
   });
 
-  function animRing() {
-    rx += (mx - rx) * 0.12;
-    ry += (my - ry) * 0.12;
-    ring.style.left = rx - 18 + 'px';
-    ring.style.top  = ry - 18 + 'px';
-    requestAnimationFrame(animRing);
+  const burger=document.getElementById('burger'),navLinks=document.getElementById('navLinks');
+  burger.addEventListener('click',()=>navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));
+
+  const observer=new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('visible'),i*80);});},{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+  // Terminal typing
+  const lines=[
+    {t:'╔══════════════════════════════════════╗',c:'#6272a4'},
+    {t:'║  🍋  Lemon Tools v1.0                ║',c:'#bd93f9'},
+    {t:'╚══════════════════════════════════════╝',c:'#6272a4'},
+    {t:'',c:''},
+    {t:'  🤖 Intelligence Artificielle',c:'#8be9fd'},
+    {t:'  [1] Assistant IA ............... ai',c:'#f8f8f2'},
+    {t:'',c:''},
+    {t:'  🔐 Sécurité',c:'#ff5555'},
+    {t:'  [2] Audit sécurité .......... audit',c:'#f8f8f2'},
+    {t:'  [3] Analyseur réseau ....... netaudit',c:'#f8f8f2'},
+    {t:'',c:''},
+    {t:'  📁 Fichiers',c:'#50fa7b'},
+    {t:'  [4] Organisateur ............. trier',c:'#f8f8f2'},
+    {t:'',c:''},
+    {t:'  👉 Votre choix : ',c:'#6272a4'},
+  ];
+  const body=document.getElementById('terminalBody');
+  let idx=0;
+  function typeLine(line,cb){
+    const span=document.createElement('div');
+    span.style.color=line.c||'#f8f8f2';
+    span.style.display='block';
+    span.style.minHeight='1.8em';
+    body.insertBefore(span,document.getElementById('termCursor'));
+    let i=0;
+    const iv=setInterval(()=>{span.textContent=line.t.slice(0,++i);if(i>=line.t.length){clearInterval(iv);setTimeout(cb,60);}},line.t.length>0?18:1);
   }
-  animRing();
-
-  document.querySelectorAll('a, button').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.transform = 'scale(2)';
-      cursor.style.background = 'var(--pink)';
-      ring.style.borderColor = 'var(--pink)';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.transform = 'scale(1)';
-      cursor.style.background = 'var(--purple)';
-      ring.style.borderColor = 'var(--purple)';
-    });
-  });
-
-  // Scroll reveal
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), i * 80);
-      }
-    });
-  }, { threshold: 0.1 });
-
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-  // Typing effect in terminal
-  const lines = document.querySelectorAll('.terminal-body div');
-  lines.forEach((line, i) => {
-    line.style.opacity = '0';
-    line.style.animation = `fadeDown 0.3s ease ${0.5 + i * 0.08}s both`;
-  });
+  function run(){if(idx<lines.length)typeLine(lines[idx++],run);}
+  setTimeout(run,800);
 </script>
 </body>
 </html>
