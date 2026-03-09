@@ -33,7 +33,19 @@ OUTILS = [
                 "nom":         "Organisateur de Téléchargements",
                 "description": "Trie automatiquement vos fichiers par catégorie",
                 "commande":    f"{PYTHON} {SCRIPTS_DIR}/organiser_telechargements.py",
-                "alias":       "trier",
+                'alias':       'trier',
+            },
+        ]
+    },
+    {
+        'categorie': '🌤️ Météo & Utilitaires',
+        'couleur': 'cyan',
+        'outils': [
+            {
+                'nom':         'Météo locale',
+                'description': 'Température, vent, prévisions 3 jours',
+                'commande':    f'{PYTHON} {SCRIPTS_DIR}/meteo.py',
+                'alias':       'meteo',
             },
         ]
     },
@@ -52,6 +64,18 @@ OUTILS = [
                 "description": "Appareils WiFi, ports ouverts, connexions actives",
                 "commande":    f"{PYTHON} {SCRIPTS_DIR}/network_analyzer.py",
                 "alias":       "netaudit",
+            },
+            {
+                "nom":         "Port Scanner Avancé",
+                "description": "Scan ports, appareils réseau, détection dangers",
+                "commande":    f"{PYTHON} {SCRIPTS_DIR}/port_scanner.py",
+                "alias":       "portscan",
+            },
+            {
+                "nom":         "Process Monitor",
+                "description": "Surveille les processus suspects en temps réel",
+                "commande":    f"{PYTHON} {SCRIPTS_DIR}/process_monitor.py",
+                "alias":       "procmon",
             },
         ]
     },
@@ -96,7 +120,7 @@ def afficher_menu():
         console = Console()
         os.system("clear")
 
-        titre = Text("🛠️  Malone Tools v1.0", style="bold cyan", justify="center")
+        titre = Text("🛠️  Lemon 🍋 Tools v1.0", style="bold cyan", justify="center")
         console.print(Panel(titre, box=box.DOUBLE, border_style="cyan", padding=(0, 2)))
         console.print()
 
@@ -148,7 +172,7 @@ def afficher_menu_fallback():
     os.system("clear")
     print("""
 \033[1;36m  ╔══════════════════════════════════════╗
-  ║        🛠️  Malone Tools v1.0         ║
+  ║        🛠️  Lemon 🍋 Tools v1.0         ║
   ╚══════════════════════════════════════╝\033[0m
     """)
     index = 1
@@ -222,9 +246,9 @@ if __name__ == "__main__":
         if choix == "0":
             os.system("clear")
             if console:
-                console.print("\n  [bold cyan]👋 À bientôt Malone ![/bold cyan]\n")
+                console.print("\n  [bold cyan]👋 À bientôt Lemon ![/bold cyan]\n")
             else:
-                print("\n  👋 À bientôt Malone !\n")
+                print("\n  👋 À bientôt Lemon !\n")
             break
         elif choix in mapping:
             lancer_outil(mapping[choix], console)
