@@ -34,9 +34,21 @@ OUTILS = [
                 "description": "Trie automatiquement vos fichiers par catégorie",
                 "commande":    f"{PYTHON} {SCRIPTS_DIR}/organiser_telechargements.py",
                 'alias':       'trier',
+	    },
+	    {
+                "nom":         "Dashboard Système",
+                "description": "CPU, RAM, disque, batterie en temps réel",
+                "commande":    f"{PYTHON} {SCRIPTS_DIR}/dashboard.py",
+                "alias":       "dashboard",
+         
             },
         ]
     },
+
+
+
+
+
     {
         'categorie': '🌤️ Météo & Utilitaires',
         'couleur': 'cyan',
@@ -77,6 +89,13 @@ OUTILS = [
                 "commande":    f"{PYTHON} {SCRIPTS_DIR}/process_monitor.py",
                 "alias":       "procmon",
             },
+	    {
+                "nom":         "Générateur de mots de passe",
+                "description": "Génère des mots de passe forts et sécurisés",
+                "commande":    f"{PYTHON} {SCRIPTS_DIR}/password_gen.py",
+                "alias":       "passgen",
+            },
+
         ]
     },
     {
