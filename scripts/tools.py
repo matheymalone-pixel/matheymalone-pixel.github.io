@@ -59,6 +59,18 @@ OUTILS = [
                 'commande':    f'{PYTHON} {SCRIPTS_DIR}/meteo.py',
                 'alias':       'meteo',
             },
+	    {
+                "nom":         "Pomodoro Timer",
+                "description": "Timer 25min travail / 5min pause",
+                "commande":    f"{PYTHON} {SCRIPTS_DIR}/pomodoro.py",
+                "alias":       "pomodoro",
+            },
+	    {
+                "nom":         "Journal de bord",
+                "description": "Notes rapides depuis le terminal",
+                "commande":    f"{PYTHON} {SCRIPTS_DIR}/journal.py",
+                "alias":       "journal",
+            },
         ]
     },
     {
