@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/Users/jessicacarrieredemonjeon/scripts/venv/bin/python3
 """
 🛠️ Malone Tools — Menu Central
 Lance tous vos scripts depuis un seul endroit.
@@ -107,7 +107,12 @@ OUTILS = [
                 "commande":    f"{PYTHON} {SCRIPTS_DIR}/password_gen.py",
                 "alias":       "passgen",
             },
-
+	    {
+                "nom":         "Traceroute Visuel",
+                "description": "Trace le chemin d'un paquet sur internet",
+                "commande":    f"{PYTHON} {SCRIPTS_DIR}/traceroute_visuel.py",
+                "alias":       "traceroute-v",
+            },
         ]
     },
     {
@@ -132,7 +137,25 @@ OUTILS = [
                 "commande":    f"cd ~/Re-Nature/sources && {PYTHON} main.py",
                 "alias":       "renature",
             },
-        ]
+         ]
+     },
+     {
+        "categorie": "🎵 Musique",
+        "couleur": "green",
+        "outils": [
+            {
+                "nom":         "Spotify Controller",
+                "description": "Contrôle Spotify depuis le terminal",
+                "commande":    f"{PYTHON} {SCRIPTS_DIR}/spotify.py",
+                "alias":       "spotify",
+            },
+            {
+                "nom":         "ASCII Art",
+                "description": "Convertit du texte en art ASCII stylé",
+                "commande":    f"{PYTHON} {SCRIPTS_DIR}/ascii_art.py",
+                "alias":       "ascii",
+            },
+        ]   
     },
 ]
 
@@ -263,8 +286,18 @@ def lancer_outil(outil, console=None):
 # ─────────────────────────────────────────
 # POINT D'ENTRÉE
 # ─────────────────────────────────────────
-
 if __name__ == "__main__":
+    try:
+        import pyfiglet, time
+        os.system("clear")
+        print("\033[1;35m" + pyfiglet.figlet_format("Lemon", font="slant") + "\033[0m")
+        print("\033[1;36m" + pyfiglet.figlet_format("Tools", font="slant") + "\033[0m")
+        print("  \033[0;35m" + "-" * 45 + "\033[0m")
+        print("  \033[0;35m  v1.0 - macOS . Python . Terminal\033[0m")
+        print("  \033[0;35m" + "-" * 45 + "\033[0m")
+        time.sleep(1.5)
+    except:
+        pass
     while True:
         result = afficher_menu()
         if isinstance(result, tuple):
