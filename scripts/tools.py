@@ -74,6 +74,18 @@ OUTILS = [
         ]
     },
     {
+        "categorie": "📱 iPhone",
+        "couleur": "cyan",
+        "outils": [
+            {
+                "nom":         "iPhone Backup Checker",
+                "description": "Vérifie tes sauvegardes iPhone",
+                "commande":    f"{PYTHON} {SCRIPTS_DIR}/iphone_backup.py",
+                "alias":       "iphonebackup",
+            },
+        ]
+    },      
+    {
         "categorie": "🔐 Sécurité",
         "couleur": "red",
         "outils": [
@@ -155,8 +167,32 @@ OUTILS = [
                 "commande":    f"{PYTHON} {SCRIPTS_DIR}/ascii_art.py",
                 "alias":       "ascii",
             },
-        ]   
-    },
+         ]
+     },
+     {   
+        "categorie": "🌍 Monde",
+        "couleur": "cyan",
+        "outils": [
+            {
+                "nom":         "Flight Tracker",
+                "description": "Suit les vols en temps réel dans le monde",
+                "commande":    f"{PYTHON} {SCRIPTS_DIR}/flight_tracker.py",
+                "alias":       "flights",
+            },
+            {
+                "nom":         "Shodan Search",
+                "description": "Trouve des appareils exposés sur internet",
+                "commande":    f"{PYTHON} {SCRIPTS_DIR}/shodan_search.py",
+                "alias":       "shodan",
+            },
+	    {
+                "nom":         "Résumé de page web",
+                "description": "Résume n'importe quel article avec Mistral",
+                "commande":    f"{PYTHON} {SCRIPTS_DIR}/web_summary.py",
+                "alias":       "websummary",
+            },
+        ]  
+    }, 
 ]
 
 # ─────────────────────────────────────────
